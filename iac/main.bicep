@@ -1,8 +1,8 @@
 @description('Name of the Azure Function App')
-param functionAppName string = 'func-foundry-tool-${uniqueString(resourceGroup().id)}'
+param functionAppName string
 
 @description('Name of the Storage Account')
-param storageAccountName string = 'stfoundrytool${uniqueString(resourceGroup().id)}'
+param storageAccountName string
 
 @description('Location for all resources')
 param location string = resourceGroup().location
@@ -17,10 +17,23 @@ param location string = resourceGroup().location
 ])
 param runtime string = 'dotnet-isolated'
 
+@description('Array of queue names to create')
+param queueNames array = [
+  'tool-input'
+  'tool-output'
+]
+
 var functionWorkerRuntime = runtime
 var hostingPlanName = 'plan-${functionAppName}'
 var applicationInsightsName = 'appi-${functionAppName}'
 var storageAccountNameCleaned = toLower(replace(storageAccountName, '-', ''))
+var managedIdentityName = 'id-${functionAppName}'
+
+// User Assigned Managed Identity
+resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: managedIdentityName
+  location: location
+}
 
 // Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
@@ -55,17 +68,13 @@ resource queueService 'Microsoft.Storage/storageAccounts/queueServices@2023-01-0
   name: 'default'
 }
 
-// Tool Input Queue
-resource toolInputQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01' = {
-  parent: queueService
-  name: 'tool-input'
-}
-
-// Tool Output Queue
-resource toolOutputQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01' = {
-  parent: queueService
-  name: 'tool-output'
-}
+// Queues - created dynamically from queueNames array
+resource queues 'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01' = [
+  for queueName in queueNames: {
+    parent: queueService
+    name: queueName
+  }
+]
 
 // Application Insights
 resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
@@ -95,23 +104,26 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
   location: location
   kind: 'functionapp'
   identity: {
-    type: 'SystemAssigned'
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${managedIdentity.id}': {}
+    }
   }
   properties: {
     serverFarmId: hostingPlan.id
     siteConfig: {
       appSettings: [
         {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+          name: 'AzureWebJobsStorage__accountName'
+          value: storageAccount.name
         }
         {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+          name: 'AzureWebJobsStorage__credential'
+          value: 'managedidentity'
         }
         {
-          name: 'WEBSITE_CONTENTSHARE'
-          value: toLower(functionAppName)
+          name: 'AzureWebJobsStorage__clientId'
+          value: managedIdentity.properties.clientId
         }
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
@@ -125,6 +137,14 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: functionWorkerRuntime
         }
+        {
+          name: 'QueueInputName'
+          value: queueNames[0]
+        }
+        {
+          name: 'QueueOutputName'
+          value: queueNames[1]
+        }
       ]
       ftpsState: 'FtpsOnly'
       minTlsVersion: '1.2'
@@ -133,7 +153,50 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 
+// Role Assignment - Storage Queue Data Contributor
+resource queueRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(storageAccount.id, managedIdentity.id, 'StorageQueueDataContributor')
+  scope: storageAccount
+  properties: {
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+    )
+    principalId: managedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Role Assignment - Storage Blob Data Contributor (for function storage)
+resource blobRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(storageAccount.id, managedIdentity.id, 'StorageBlobDataContributor')
+  scope: storageAccount
+  properties: {
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+    )
+    principalId: managedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Role Assignment - Storage Table Data Contributor (for function storage)
+resource tableRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(storageAccount.id, managedIdentity.id, 'StorageTableDataContributor')
+  scope: storageAccount
+  properties: {
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+    )
+    principalId: managedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
 output functionAppName string = functionApp.name
 output storageAccountName string = storageAccount.name
-output toolInputQueueName string = toolInputQueue.name
-output toolOutputQueueName string = toolOutputQueue.name
+output queueNames array = [for (queueName, i) in queueNames: queues[i].name]
+output managedIdentityId string = managedIdentity.id
+output managedIdentityClientId string = managedIdentity.properties.clientId
