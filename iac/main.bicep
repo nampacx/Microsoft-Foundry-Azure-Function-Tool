@@ -33,7 +33,7 @@ param projectName string
 param modelDeploymentName string
 
 @description('Model SKU capacity')
-param modelSkuCapacity int = 1
+param modelSkuCapacity int = 50
 
 @description('Model SKU name')
 param modelSkuName string = 'Standard'
@@ -116,9 +116,7 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2022-09-01' = {
     name: 'Y1'
     tier: 'Dynamic'
   }
-  properties: {
-    reserved: true
-  }
+  properties: {}
 }
 
 // Function App
@@ -167,6 +165,10 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'QueueOutputName'
           value: queueNames[1]
+        }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '1'
         }
       ]
       ftpsState: 'FtpsOnly'
@@ -268,7 +270,7 @@ resource aiProject 'Microsoft.CognitiveServices/accounts/projects@2025-10-01-pre
 }
 
 // Model Deployment
-resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-10-01-preview' = {
   parent: aiFoundry
   name: modelDeploymentName
   sku: {

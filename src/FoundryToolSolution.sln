@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionApp", "FunctionApp\FunctionApp.csproj", "{E27CF47F-1ED2-4D65-9480-4FB52F6BF6BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApi", "OpenApi\OpenApi.csproj", "{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{E27CF47F-1ED2-4D65-9480-4FB52F6BF6BF}.Release|x64.Build.0 = Release|Any CPU
 		{E27CF47F-1ED2-4D65-9480-4FB52F6BF6BF}.Release|x86.ActiveCfg = Release|Any CPU
 		{E27CF47F-1ED2-4D65-9480-4FB52F6BF6BF}.Release|x86.Build.0 = Release|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Debug|x64.Build.0 = Debug|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Debug|x86.Build.0 = Debug|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Release|x64.ActiveCfg = Release|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Release|x64.Build.0 = Release|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Release|x86.ActiveCfg = Release|Any CPU
+		{D411C3E4-D717-48DD-88CD-CCB7D4DFF9B1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

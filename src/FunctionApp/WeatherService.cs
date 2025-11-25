@@ -25,7 +25,7 @@ public class WeatherService
     [OpenApiParameter(name: "location", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The location to get weather for (e.g., Berlin, London, Paris)")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(WeatherResponse), Description = "Successfully retrieved weather data")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/json", bodyType: typeof(ErrorResponse), Description = "Missing or invalid location parameter")]
-    public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest req)
+    public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
     {
         // Get location parameter from query string or body
         string? location = req.Query["location"];
