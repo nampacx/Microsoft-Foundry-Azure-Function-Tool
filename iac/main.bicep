@@ -219,7 +219,7 @@ resource tableRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01
 }
 
 // AI Foundry Account
-resource aiFoundry 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
+resource aiFoundry 'Microsoft.CognitiveServices/accounts@2025-10-01-preview' = {
   name: aiFoundryName
   location: location
   identity: {
@@ -237,8 +237,27 @@ resource aiFoundry 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   }
 }
 
+resource accountCapabilityHost 'Microsoft.CognitiveServices/accounts/capabilityHosts@2025-10-01-preview' = {
+  name: 'accountCapHost'
+  parent: aiFoundry
+  properties: {
+    capabilityHostKind: 'Agents'
+  }
+}
+
+resource projectCapabilityHost 'Microsoft.CognitiveServices/accounts/projects/capabilityHosts@2025-10-01-preview' = {
+  name: 'projectCapHost'
+  parent: aiProject
+  properties: {
+    capabilityHostKind: 'Agents'
+  }
+  dependsOn: [
+    accountCapabilityHost
+  ]
+}
+
 // AI Project
-resource aiProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
+resource aiProject 'Microsoft.CognitiveServices/accounts/projects@2025-10-01-preview' = {
   name: projectName
   parent: aiFoundry
   location: location
@@ -261,6 +280,20 @@ resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-
       name: modelName
       format: modelFormat
     }
+  }
+}
+
+// Role Assignment - Storage Queue Data Contributor for AI Project
+resource aiProjectQueueRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(storageAccount.id, aiProject.id, 'StorageQueueDataContributor')
+  scope: storageAccount
+  properties: {
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+    )
+    principalId: aiProject.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
 
