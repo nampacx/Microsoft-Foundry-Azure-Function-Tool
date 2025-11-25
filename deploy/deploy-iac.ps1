@@ -8,7 +8,6 @@ param(
 )
 
 $iacDir = Join-Path $PSScriptRoot ".." "iac"
-Set-Location $iacDir
 
 # Get current Azure context
 $account = az account show | ConvertFrom-Json
@@ -23,8 +22,8 @@ az group create --name $ResourceGroupName --location $Location --output none
 Write-Host "Running deployment what-if analysis..." -ForegroundColor Yellow
 az deployment group what-if `
     --resource-group $ResourceGroupName `
-    --template-file main.bicep `
-    --parameters main.bicepparam
+    --template-file (Join-Path $iacDir "main.bicep") `
+    --parameters (Join-Path $iacDir "main.bicepparam")
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "`nWhat-if analysis failed!" -ForegroundColor Red
@@ -44,8 +43,8 @@ Write-Host "`nStarting deployment..." -ForegroundColor Yellow
 az deployment group create `
     --name "deploy-$(Get-Date -Format 'yyyyMMddHHmmss')" `
     --resource-group $ResourceGroupName `
-    --template-file main.bicep `
-    --parameters main.bicepparam
+    --template-file (Join-Path $iacDir "main.bicep") `
+    --parameters (Join-Path $iacDir "main.bicepparam")
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`nDeployment completed successfully!" -ForegroundColor Green

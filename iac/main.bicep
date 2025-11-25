@@ -23,6 +23,27 @@ param queueNames array = [
   'tool-output'
 ]
 
+@description('Name of the AI Foundry account')
+param aiFoundryName string
+
+@description('Name of the AI Project')
+param projectName string
+
+@description('Name of the model deployment')
+param modelDeploymentName string
+
+@description('Model SKU capacity')
+param modelSkuCapacity int = 1
+
+@description('Model SKU name')
+param modelSkuName string = 'Standard'
+
+@description('Model name')
+param modelName string
+
+@description('Model format')
+param modelFormat string = 'OpenAI'
+
 var functionWorkerRuntime = runtime
 var hostingPlanName = 'plan-${functionAppName}'
 var applicationInsightsName = 'appi-${functionAppName}'
@@ -87,7 +108,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-// App Service Plan
+// App Service Plan - Consumption
 resource hostingPlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: hostingPlanName
   location: location
@@ -95,7 +116,9 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2022-09-01' = {
     name: 'Y1'
     tier: 'Dynamic'
   }
-  properties: {}
+  properties: {
+    reserved: true
+  }
 }
 
 // Function App
@@ -195,8 +218,58 @@ resource tableRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01
   }
 }
 
+// AI Foundry Account
+resource aiFoundry 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
+  name: aiFoundryName
+  location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
+  sku: {
+    name: 'S0'
+  }
+  kind: 'AIServices'
+  properties: {
+    publicNetworkAccess: 'Enabled'
+    allowProjectManagement: true
+    customSubDomainName: aiFoundryName
+    disableLocalAuth: true
+  }
+}
+
+// AI Project
+resource aiProject 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-preview' = {
+  name: projectName
+  parent: aiFoundry
+  location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {}
+}
+
+// Model Deployment
+resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
+  parent: aiFoundry
+  name: modelDeploymentName
+  sku: {
+    capacity: modelSkuCapacity
+    name: modelSkuName
+  }
+  properties: {
+    model: {
+      name: modelName
+      format: modelFormat
+    }
+  }
+}
+
 output functionAppName string = functionApp.name
 output storageAccountName string = storageAccount.name
 output queueNames array = [for (queueName, i) in queueNames: queues[i].name]
 output managedIdentityId string = managedIdentity.id
 output managedIdentityClientId string = managedIdentity.properties.clientId
+output aiFoundryName string = aiFoundry.name
+output aiFoundryEndpoint string = aiFoundry.properties.endpoint
+output aiProjectName string = aiProject.name
+output modelDeploymentName string = modelDeployment.name

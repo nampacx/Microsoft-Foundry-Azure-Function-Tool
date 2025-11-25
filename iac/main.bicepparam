@@ -13,3 +13,11 @@ param queueNames = [
   'tool-input'
   'tool-output'
 ]
+
+param aiFoundryName = 'ai-foundry-account'
+param projectName = 'ai-project'
+param modelDeploymentName = 'gpt-4o-deployment'
+param modelSkuCapacity = 1
+param modelSkuName = 'Standard'
+param modelName = 'gpt-4o'
+param modelFormat = 'OpenAI'
