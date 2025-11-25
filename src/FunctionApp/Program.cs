@@ -12,10 +12,25 @@ var host = new HostBuilder()
     {
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
+        
+        // Remove the default Application Insights logging filter
+        services.Configure<LoggerFilterOptions>(options =>
+        {
+            LoggerFilterRule? defaultRule = options.Rules.FirstOrDefault(rule => 
+                rule.ProviderName == "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
+            if (defaultRule is not null)
+            {
+                options.Rules.Remove(defaultRule);
+            }
+        });
     })
-    .ConfigureLogging(logging =>
+    .ConfigureLogging((context, logging) =>
     {
+        // Add console logging for local debugging
         logging.AddConsole();
+        
+        // Set log levels
+        logging.SetMinimumLevel(LogLevel.Information);
     })
     .Build();
 

@@ -3,36 +3,46 @@ using Microsoft.Extensions.Logging;
 
 namespace FunctionApp;
 
-public class Response
+public class WeatherRequest
 {
-    public required string Value { get; set; }
+    public required string Location { get; set; }
     public required string CorrelationId { get; set; }
 }
 
-public class Arguments
+public class WeatherQueueResponse
 {
-    public required string Name { get; set; }
+    public required string Location { get; set; }
+    public required int Temperature { get; set; }
+    public required string Unit { get; set; }
     public required string CorrelationId { get; set; }
 }
 
-public class Foo
+public class WeatherServiceQueue
 {
-    private readonly ILogger<Foo> _logger;
+    private readonly ILogger<WeatherServiceQueue> _logger;
+    private static readonly Random _random = new Random();
 
-    public Foo(ILogger<Foo> logger)
+    public WeatherServiceQueue(ILogger<WeatherServiceQueue> logger)
     {
         _logger = logger;
     }
 
-    [Function("Foo")]
+    [Function("WeatherServiceQueue")]
     [QueueOutput("%QueueOutputName%", Connection = "AzureWebJobsStorage")]
-    public Response Run([QueueTrigger("%QueueInputName%", Connection = "AzureWebJobsStorage")] Arguments input)
+    public WeatherQueueResponse Run([QueueTrigger("%QueueInputName%", Connection = "AzureWebJobsStorage")] WeatherRequest input)
     {
-        _logger.LogInformation("Processing queue message for {Name} with CorrelationId: {CorrelationId}", input.Name, input.CorrelationId);
+        _logger.LogInformation("Processing weather request for location: {Location} with CorrelationId: {CorrelationId}", input.Location, input.CorrelationId);
 
-        var response = new Response
+        // Generate random temperature between -15 and 45 degrees Celsius
+        int temperature = _random.Next(-15, 46); // 46 because upper bound is exclusive
+
+        _logger.LogInformation("Generated temperature for {Location}: {Temperature}°C", input.Location, temperature);
+
+        var response = new WeatherQueueResponse
         {
-            Value = $"Hello, {input.Name}! Welcome!",
+            Location = input.Location,
+            Temperature = temperature,
+            Unit = "Celsius",
             CorrelationId = input.CorrelationId
         };
 

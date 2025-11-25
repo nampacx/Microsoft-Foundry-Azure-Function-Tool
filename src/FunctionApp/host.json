@@ -5,14 +5,28 @@
             "samplingSettings": {
                 "isEnabled": true,
                 "maxTelemetryItemsPerSecond": 20
-            }
+            },
+            "enableLiveMetrics": true,
+            "enableDependencyTracking": true,
+            "enablePerformanceCountersCollection": true
         },
         "logLevel": {
-            "default": "Warning",
-            "Host.Results": "Warning",
-            "Function.Foo": "Information",
+            "default": "Information",
+            "Host.Results": "Information",
+            "Function": "Information",
             "FunctionApp": "Information",
-            "Host.Aggregator": "Warning"
+            "Host.Aggregator": "Warning",
+            "Microsoft": "Warning",
+            "Microsoft.Azure.WebJobs": "Warning",
+            "Azure": "Warning",
+            "Azure.Core": "Warning",
+            "Azure.Identity": "Warning",
+            "Worker": "Warning"
+        }
+    },
+    "extensions": {
+        "queues": {
+            "maxDequeueCount": 1
         }
     }
 }
