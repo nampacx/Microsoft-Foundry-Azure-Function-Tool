@@ -1,11 +1,18 @@
 {
     "version": "2.0",
     "logging": {
+        "applicationInsights": {
+            "samplingSettings": {
+                "isEnabled": true,
+                "maxTelemetryItemsPerSecond": 20
+            }
+        },
         "logLevel": {
             "default": "Warning",
-            "Host.Results": "Error",
-            "Function": "Error",
-            "Host.Aggregator": "Error"
+            "Host.Results": "Warning",
+            "Function.Foo": "Information",
+            "FunctionApp": "Information",
+            "Host.Aggregator": "Warning"
         }
     }
 }

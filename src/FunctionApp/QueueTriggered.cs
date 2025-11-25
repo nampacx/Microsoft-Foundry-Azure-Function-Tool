@@ -11,6 +11,7 @@ public class Response
 
 public class Arguments
 {
+    public required string Name { get; set; }
     public required string CorrelationId { get; set; }
 }
 
@@ -24,14 +25,14 @@ public class Foo
     }
 
     [Function("Foo")]
-    [QueueOutput("QueueOutputName", Connection = "AzureWebJobsStorage")]
-    public Response Run([QueueTrigger("QueueInputName", Connection = "AzureWebJobsStorage")] Arguments input)
+    [QueueOutput("%QueueOutputName%", Connection = "AzureWebJobsStorage")]
+    public Response Run([QueueTrigger("%QueueInputName%", Connection = "AzureWebJobsStorage")] Arguments input)
     {
-        _logger.LogInformation("Processing queue message with CorrelationId: {CorrelationId}", input.CorrelationId);
+        _logger.LogInformation("Processing queue message for {Name} with CorrelationId: {CorrelationId}", input.Name, input.CorrelationId);
 
         var response = new Response
         {
-            Value = "Bar",
+            Value = $"Hello, {input.Name}! Welcome!",
             CorrelationId = input.CorrelationId
         };
 
