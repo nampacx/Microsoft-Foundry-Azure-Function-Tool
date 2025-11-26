@@ -16,8 +16,8 @@ param queueNames = [
 
 param aiFoundryName = 'ai-foundry-account'
 param projectName = 'ai-project'
-param modelDeploymentName = 'gpt-4o-deployment'
-param modelSkuCapacity = 1
-param modelSkuName = 'Standard'
-param modelName = 'gpt-4o'
+param modelDeploymentName = 'gpt-4o-mini-deployment'
+param modelSkuCapacity = 200
+param modelSkuName = 'GlobalStandard'
+param modelName = 'gpt-4o-mini'
 param modelFormat = 'OpenAI'
