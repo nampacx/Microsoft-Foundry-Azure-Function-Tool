@@ -29,7 +29,7 @@ The solution consists of:
 │   └── deploy-function.ps1 # Function app deployment
 └── src/                   # Source code
     ├── FunctionApp/       # Azure Function implementation
-    ├── ConsoleApp/        # Queue-based agent example
+    ├── FunctionTool/        # Queue-based agent example
     ├── MultiAgent/        # Multi-agent orchestration example
     ├── OpenApi/           # OpenAPI-based tool integration
     └── Shared/            # Shared services and utilities
@@ -44,7 +44,7 @@ Azure Function (.NET 8 isolated) that implements custom tools:
 - Application Insights integration
 - Sample weather service implementation
 
-### ConsoleApp
+### FunctionTool
 Demonstrates how to create an agent that uses Azure Storage Queues to communicate with function-based tools:
 - Creates agents with custom tool definitions
 - Submits tool execution requests to Azure queues
