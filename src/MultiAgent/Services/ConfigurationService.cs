@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using MultiAgent.Services;
 
 namespace OpenApi.Services;
 
@@ -18,8 +19,8 @@ public class ConfigurationService : IConfigurationService
     public string? ModelDeploymentName => _configuration["ModelDeploymentName"];
     public string? TenantId => _configuration["TenantId"];
     public string? OpenApiSpecUrl => _configuration["OpenApiSpecUrl"];
-
     public string? AgentName => _configuration["AgentName"];
+    public string? OrchestratorAgentName => _configuration["OrchestratorAgentName"];
 
     public bool ValidateConfiguration()
     {

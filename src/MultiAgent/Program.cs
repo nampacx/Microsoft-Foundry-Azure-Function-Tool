@@ -1,4 +1,5 @@
-﻿using OpenApi.Services;
+﻿using MultiAgent.Services;
+using OpenApi.Services;
 
 // Initialize services
 var configService = new ConfigurationService();
@@ -27,11 +28,11 @@ var openApiTool = OpenApiToolFactory.CreateWeatherTool(openApiSpec);
 var agentService = new AgentService(configService.ProjectEndpoint!, configService.TenantId);
 
 // Get or create agent
-var agent = await agentService.GetOrCreateAgentAsync(configService.AgentName!, configService.ModelDeploymentName!, openApiTool);
+var weatherAgent = await agentService.GetOrCreateAgentAsync(configService.AgentName!, configService.ModelDeploymentName!, openApiTool);
 
 // Create thread and run agent
 var thread = await agentService.CreateThreadAsync();
-var run = await agentService.RunAgentAsync(thread, agent, "How is the weather in Seattle?");
+var run = await agentService.RunAgentAsync(thread, weatherAgent, "How is the weather in Seattle?");
 
 // Display results
 agentService.DisplayResults(thread, run);
