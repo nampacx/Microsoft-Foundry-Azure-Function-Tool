@@ -418,3 +418,6 @@ FodyWeavers.xsd
 *.msp
 src/OpenApi/appsettings.json
 src/OpenApi/appsettings.json
+
+
+**/appsettings.json

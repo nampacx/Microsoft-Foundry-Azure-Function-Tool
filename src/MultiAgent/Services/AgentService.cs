@@ -22,7 +22,7 @@ public class AgentService : IAgentService
         _client = new PersistentAgentsClient(projectEndpoint, credentials);
     }
 
-    public async Task<PersistentAgent> GetOrCreateAgentAsync(string agentName, string modelDeploymentName, OpenApiToolDefinition? openApiTool = null)
+    public async Task<PersistentAgent> GetOrCreateAgentAsync(string agentName, string modelDeploymentName, ToolDefinition[]? tools = null)
     {
         Console.WriteLine($"Checking if agent '{agentName}' already exists...");
         PersistentAgent? agent = null;
@@ -48,12 +48,12 @@ public class AgentService : IAgentService
         if (agent == null)
         {
             Console.WriteLine("Creating new persistent agent...");
-            var tools = openApiTool != null ? new[] { openApiTool } : null;
+            
             agent = await _client.Administration.CreateAgentAsync(
                 model: modelDeploymentName,
                 name: agentName,
                 instructions: "You are a helpful agent.",
-                tools: tools
+                tools: tools ?? Array.Empty<ToolDefinition>()
             );
             Console.WriteLine($"Agent created: {agent.Id}");
         }
