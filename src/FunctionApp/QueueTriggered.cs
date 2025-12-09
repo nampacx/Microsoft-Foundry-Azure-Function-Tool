@@ -1,5 +1,6 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace FunctionApp;
 
@@ -9,11 +10,10 @@ public class WeatherRequest
     public required string CorrelationId { get; set; }
 }
 
-public class WeatherQueueResponse
+public class ToolResponse
 {
-    public required string Location { get; set; }
-    public required int Temperature { get; set; }
-    public required string Unit { get; set; }
+    public required string Value { get; set; }
+
     public required string CorrelationId { get; set; }
 }
 
@@ -29,7 +29,7 @@ public class WeatherServiceQueue
 
     [Function("WeatherServiceQueue")]
     [QueueOutput("%QueueOutputName%", Connection = "AzureWebJobsStorage")]
-    public WeatherQueueResponse Run([QueueTrigger("%QueueInputName%", Connection = "AzureWebJobsStorage")] WeatherRequest input)
+    public ToolResponse Run([QueueTrigger("%QueueInputName%", Connection = "AzureWebJobsStorage")] WeatherRequest input)
     {
         _logger.LogInformation("Processing weather request for location: {Location} with CorrelationId: {CorrelationId}", input.Location, input.CorrelationId);
 
@@ -38,11 +38,17 @@ public class WeatherServiceQueue
 
         _logger.LogInformation("Generated temperature for {Location}: {Temperature}°C", input.Location, temperature);
 
-        var response = new WeatherQueueResponse
+
+        var result = new
         {
             Location = input.Location,
             Temperature = temperature,
-            Unit = "Celsius",
+            Unit = "Celsius"
+        };
+
+        var response = new ToolResponse
+        {
+            Value = JsonSerializer.Serialize(result),
             CorrelationId = input.CorrelationId
         };
 

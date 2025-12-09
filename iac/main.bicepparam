@@ -1,12 +1,10 @@
 using './main.bicep'
 
-// Parameters for Azure Function App deployment
+// Parameters for Azure Function App and Foundry deployment
 // Modify these values as needed for your deployment
 
-// Leave commented to use auto-generated names based on resource group
-
-param functionAppName = 'my-custom-func-app'
-param storageAccountName = 'mkagentstorage'
+// Function App parameters
+param functionAppName = 'koko-agent-tool-func-app'
 param runtime = 'dotnet-isolated'
 
 param queueNames = [
@@ -14,10 +12,19 @@ param queueNames = [
   'tool-output'
 ]
 
-param aiFoundryName = 'ai-foundry-account'
-param projectName = 'ai-project'
+// Foundry resources
+param aiFoundryName = 'kk-fndry-ccnt'
+param projectName = 'kk-prjct'
+
+// Model deployment configuration
 param modelDeploymentName = 'gpt-4o-mini-deployment'
 param modelSkuCapacity = 200
 param modelSkuName = 'GlobalStandard'
 param modelName = 'gpt-4o-mini'
 param modelFormat = 'OpenAI'
+
+// Project-dependent resources
+param storageAccountName = 'kkfndryagtendstorage'
+param cosmosDbAccountName = 'kkfndryagtendcosmosdb'
+param searchServiceName = 'kkfndryagtendsearch'
+param keyVaultName = 'kkfndryagtendkeyvault'

@@ -416,8 +416,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-src/OpenApi/appsettings.json
-src/OpenApi/appsettings.json
 
-
+# Application settings files
 **/appsettings.json
+**/appsettings.*.json
