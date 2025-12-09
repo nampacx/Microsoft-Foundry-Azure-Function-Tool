@@ -15,6 +15,8 @@ var projectEndpoint = configuration["ProjectEndpoint"];
 var modelDeploymentName = configuration["ModelDeploymentName"];
 var tenantId = configuration["TenantId"];
 var openApiSpecUrl = configuration["OpenApiSpecUrl"];
+var agentName = configuration["AgentName"];
+
 
 // Validate configuration
 if (string.IsNullOrEmpty(projectEndpoint) || string.IsNullOrEmpty(modelDeploymentName))
@@ -51,7 +53,6 @@ var openApiTool = OpenApiToolFactory.CreateWeatherTool(openApiSpec);
 var agentService = new AgentService(configService.ProjectEndpoint!, configService.TenantId);
 
 // Get or create agent
-const string agentName = "azure-function-agent-foo";
 var agent = await agentService.GetOrCreateAgentAsync(agentName, configService.ModelDeploymentName!, openApiTool);
 
 // Create thread and run agent

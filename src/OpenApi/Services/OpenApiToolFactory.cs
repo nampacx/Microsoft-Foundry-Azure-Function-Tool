@@ -12,9 +12,6 @@ public static class OpenApiToolFactory
         var securitySchema = new OpenApiManagedSecurityScheme("apiKey");
         var key = new OpenApiManagedAuthDetails(securitySchema);
        
-        OpenApiConnectionAuthDetails
-
-
         var oaiAuth = new OpenApiAnonymousAuthDetails();
         return new OpenApiToolDefinition(
             name: "get_weather",
