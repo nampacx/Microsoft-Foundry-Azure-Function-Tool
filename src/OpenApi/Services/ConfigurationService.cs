@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace OpenApi.Services;
 
-public class ConfigurationService : IConfigurationService
+public class ConfigurationService 
 {
     private readonly IConfigurationRoot _configuration;
 
@@ -23,7 +23,7 @@ public class ConfigurationService : IConfigurationService
 
     public bool ValidateConfiguration()
     {
-        if (string.IsNullOrEmpty(ProjectEndpoint) || string.IsNullOrEmpty(ModelDeploymentName))
+        if (string.IsNullOrEmpty(ProjectEndpoint) || string.IsNullOrEmpty(ModelDeploymentName) )
         {
             Console.WriteLine("Error: Required configuration values are not set in appsettings.json.");
             Console.WriteLine("Please set: ProjectEndpoint, ModelDeploymentName");

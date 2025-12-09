@@ -4,7 +4,7 @@ using Azure.Identity;
 
 namespace OpenApi.Services;
 
-public class AgentService : IAgentService
+public class AgentService
 {
     private readonly PersistentAgentsClient _client;
 

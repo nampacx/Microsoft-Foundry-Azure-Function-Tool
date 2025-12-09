@@ -1,41 +1,66 @@
-using Azure;
 using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 
-namespace ConsoleApp.Services;
+namespace FunctionTool.Services;
 
-public class AgentService : IAgentService
+public class AgentService
 {
     private readonly PersistentAgentsClient _client;
 
     public AgentService(string projectEndpoint, string? tenantId)
     {
         Console.WriteLine("Initializing Persistent Agents Client...");
-        
+
         var credentialOptions = new DefaultAzureCredentialOptions();
         if (!string.IsNullOrEmpty(tenantId))
         {
             credentialOptions.TenantId = tenantId;
         }
 
-        _client = new PersistentAgentsClient(projectEndpoint, new DefaultAzureCredential(credentialOptions));
+        var credentials = new DefaultAzureCredential(credentialOptions);
+        _client = new PersistentAgentsClient(projectEndpoint, credentials);
     }
 
-    public async Task<PersistentAgent> CreateAgentAsync(string modelDeploymentName, AzureFunctionToolDefinition weatherTool)
+    public async Task<PersistentAgent> GetOrCreateAgentAsync(string agentName, string modelDeploymentName, ToolDefinition[]? tools = null)
     {
-        Console.WriteLine("Creating persistent agent...");
-        var agentResponse = await _client.Administration.CreateAgentAsync(
-            model: modelDeploymentName,
-            name: "weather-assistant-agent",
-            instructions: "You are a helpful weather assistant. When users ask about weather in a location, "
-                + "use the get_weather function to retrieve current weather information. "
-                + "Always generate a unique CorrelationId (GUID format) for each weather request. "
-                + "Present the temperature information in a friendly and conversational way.",
-            tools: [weatherTool]
-        );
+        Console.WriteLine($"Checking if agent '{agentName}' already exists...");
+        PersistentAgent? agent = null;
 
-        var agent = agentResponse.Value;
-        Console.WriteLine($"Agent created: {agent.Id}");
+        try
+        {
+            var existingAgents = _client.Administration.GetAgents();
+            foreach (var existingAgent in existingAgents)
+            {
+                if (existingAgent.Name == agentName)
+                {
+                    agent = existingAgent;
+                    Console.WriteLine($"Found existing agent: {agent.Id}");
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Error checking for existing agents: {ex.Message}");
+        }
+
+        if (agent == null)
+        {
+            Console.WriteLine("Creating new persistent agent...");
+
+            agent = await _client.Administration.CreateAgentAsync(
+                model: modelDeploymentName,
+                name: agentName,
+                instructions: "You are a helpful agent.",
+                tools: tools ?? Array.Empty<ToolDefinition>()
+            );
+            Console.WriteLine($"Agent created: {agent.Id}");
+        }
+        else
+        {
+            Console.WriteLine($"Using existing agent: {agent.Id}");
+        }
+
         return agent;
     }
 
@@ -56,12 +81,12 @@ public class AgentService : IAgentService
             userMessage);
 
         Console.WriteLine("Running agent...");
-        var run = (await _client.Runs.CreateRunAsync(thread.Id, agent.Id)).Value;
+        var run = (await _client.Runs.CreateRunAsync(thread, agent)).Value;
 
         do
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(1000));
-            run = (await _client.Runs.GetRunAsync(thread.Id, run.Id)).Value;
+            await Task.Delay(TimeSpan.FromMilliseconds(5000));
+            run = await _client.Runs.GetRunAsync(thread.Id, run.Id);
             Console.WriteLine($"Run status: {run.Status}");
         }
         while (run.Status == RunStatus.Queued
@@ -77,7 +102,6 @@ public class AgentService : IAgentService
         {
             Console.WriteLine("Run completed successfully!");
 
-            // Get messages from the thread
             var messages = _client.Messages.GetMessages(
                 threadId: thread.Id,
                 order: ListSortOrder.Ascending

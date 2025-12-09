@@ -1,4 +1,4 @@
-﻿using ConsoleApp.Services;
+﻿using FunctionTool.Services;
 
 // Initialize services
 var configService = new ConfigurationService();
@@ -14,7 +14,7 @@ var weatherTool = ToolFactory.CreateWeatherTool(configService.StorageQueueUri!);
 var agentService = new AgentService(configService.ProjectEndpoint!, configService.TenantId);
 
 // Create agent
-var agent = await agentService.CreateAgentAsync(configService.ModelDeploymentName!, weatherTool);
+var agent = await agentService.GetOrCreateAgentAsync(configService.AgentName!, configService.ModelDeploymentName!, new[] { weatherTool });
 
 // Create thread and run agent
 var thread = await agentService.CreateThreadAsync();

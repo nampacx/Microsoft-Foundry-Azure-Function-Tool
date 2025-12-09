@@ -2,7 +2,7 @@ using Azure;
 using Azure.AI.Agents.Persistent;
 using Azure.Identity;
 
-namespace MultiAgent.Services;
+namespace Shared.Services;
 
 public class AgentService
 {
@@ -22,7 +22,7 @@ public class AgentService
         _client = new PersistentAgentsClient(projectEndpoint, credentials);
     }
 
-    public async Task<PersistentAgent> GetOrCreateAgentAsync(string agentName, string modelDeploymentName, ToolDefinition[]? tools = null)
+    public async Task<PersistentAgent> GetOrCreateAgentAsync(string agentName, string modelDeploymentName, OpenApiToolDefinition openApiTool)
     {
         Console.WriteLine($"Checking if agent '{agentName}' already exists...");
         PersistentAgent? agent = null;
@@ -48,12 +48,11 @@ public class AgentService
         if (agent == null)
         {
             Console.WriteLine("Creating new persistent agent...");
-            
             agent = await _client.Administration.CreateAgentAsync(
                 model: modelDeploymentName,
                 name: agentName,
                 instructions: "You are a helpful agent.",
-                tools: tools ?? Array.Empty<ToolDefinition>()
+                tools: [openApiTool]
             );
             Console.WriteLine($"Agent created: {agent.Id}");
         }
@@ -132,5 +131,10 @@ public class AgentService
                 Console.WriteLine($"Error: {run.LastError.Message}");
             }
         }
+    }
+
+    internal async Task GetOrCreateAgentAsync(object value, string v, OpenApiToolDefinition openApiTool)
+    {
+        throw new NotImplementedException();
     }
 }

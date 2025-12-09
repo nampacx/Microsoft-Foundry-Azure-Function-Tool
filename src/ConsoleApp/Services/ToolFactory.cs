@@ -2,7 +2,7 @@ using Azure;
 using Azure.AI.Agents.Persistent;
 using System.Text.Json;
 
-namespace ConsoleApp.Services;
+namespace FunctionTool.Services;
 
 public static class ToolFactory
 {

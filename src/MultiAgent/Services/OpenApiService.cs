@@ -1,6 +1,6 @@
 namespace MultiAgent.Services;
 
-public class OpenApiService : IOpenApiService
+public class OpenApiService
 {
     private readonly HttpClient _httpClient;
 

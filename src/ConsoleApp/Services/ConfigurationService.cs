@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Configuration;
 
-namespace ConsoleApp.Services;
+namespace FunctionTool.Services;
 
-public class ConfigurationService : IConfigurationService
+public class ConfigurationService
 {
     private readonly IConfigurationRoot _configuration;
 
@@ -16,15 +16,16 @@ public class ConfigurationService : IConfigurationService
 
     public string? ProjectEndpoint => _configuration["ProjectEndpoint"];
     public string? ModelDeploymentName => _configuration["ModelDeploymentName"];
-    public string? StorageQueueUri => _configuration["StorageQueueUri"];
     public string? TenantId => _configuration["TenantId"];
+    public string? AgentName => _configuration["AgentName"];
+    public string? StorageQueueUri => _configuration["StorageQueueUri"];
 
     public bool ValidateConfiguration()
     {
-        if (string.IsNullOrEmpty(ProjectEndpoint) || string.IsNullOrEmpty(ModelDeploymentName) || string.IsNullOrEmpty(StorageQueueUri))
+        if (string.IsNullOrEmpty(ProjectEndpoint) || string.IsNullOrEmpty(ModelDeploymentName))
         {
             Console.WriteLine("Error: Required configuration values are not set in appsettings.json.");
-            Console.WriteLine("Please set: ProjectEndpoint, ModelDeploymentName, StorageQueueUri, TenantId");
+            Console.WriteLine("Please set: ProjectEndpoint, ModelDeploymentName");
             return false;
         }
         return true;
