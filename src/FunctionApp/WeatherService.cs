@@ -27,6 +27,8 @@ public class WeatherService
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/json", bodyType: typeof(ErrorResponse), Description = "Missing or invalid location parameter")]
     public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
     {
+        req.Headers.TryGetValue("Authorization", out var authHeader);
+
         // Get location parameter from query string or body
         string? location = req.Query["location"];
         
