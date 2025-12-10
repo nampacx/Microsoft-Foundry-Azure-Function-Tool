@@ -146,6 +146,9 @@ module aiFoundry './modules/ai-foundry.bicep' = {
     cosmosDbEndpoint: cosmosDb.outputs.cosmosDbEndpoint
     cosmosDbAccountId: cosmosDb.outputs.cosmosDbAccountId
     cosmosDbDatabaseName: cosmosDb.outputs.databaseName
+    applicationInsightsConnectionString: functionApp.outputs.applicationInsightsConnectionString
+    applicationInsightsId: functionApp.outputs.applicationInsightsId
+    applicationInsightsInstrumentationKey: functionApp.outputs.applicationInsightsInstrumentationKey
     deployCapabilityHosts: false
   }
 }
@@ -162,25 +165,7 @@ module roleAssignments './modules/role-assignments.bicep' = {
     managedIdentityPrincipalId: managedIdentity.outputs.principalId
     aiProjectPrincipalId: aiFoundry.outputs.aiProjectPrincipalId
   }
-  dependsOn: [
-    aiFoundry
-  ]
 }
-
-// AI Foundry Capability Hosts Module (deployed after role assignments)
-module aiFoundryCapabilityHosts './modules/ai-foundry-capability-hosts.bicep' = {
-  name: 'aifoundry-capabilityhosts-deployment'
-  params: {
-    aiFoundryName: aiFoundry.outputs.aiFoundryName
-    projectName: aiFoundry.outputs.aiProjectName
-    storageConnectionName: 'storage-connection'
-    searchConnectionName: 'search-connection'
-  }
-  dependsOn: [
-    roleAssignments
-  ]
-}
-
 // ===== OUTPUTS =====
 
 output functionAppName string = functionApp.outputs.functionAppName

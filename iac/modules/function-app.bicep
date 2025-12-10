@@ -114,3 +114,6 @@ resource functionApp 'Microsoft.Web/sites@2022-09-01' = {
 output functionAppId string = functionApp.id
 output functionAppName string = functionApp.name
 output applicationInsightsInstrumentationKey string = applicationInsights.properties.InstrumentationKey
+output applicationInsightsConnectionString string = applicationInsights.properties.ConnectionString
+output applicationInsightsId string = applicationInsights.id
+output applicationInsightsName string = applicationInsights.name

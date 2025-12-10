@@ -52,6 +52,15 @@ param cosmosDbDatabaseName string
 @description('Whether to deploy capability hosts (should be false initially)')
 param deployCapabilityHosts bool = true
 
+@description('Application Insights connection string')
+param applicationInsightsConnectionString string
+
+@description('Application Insights resource ID')
+param applicationInsightsId string
+
+@description('Application Insights instrumentation key')
+param applicationInsightsInstrumentationKey string
+
 // AI Foundry Account (Cognitive Service AIServices)
 resource aiFoundry 'Microsoft.CognitiveServices/accounts@2025-10-01-preview' = {
   name: aiFoundryName
@@ -149,11 +158,29 @@ resource projectCosmosConnection 'Microsoft.CognitiveServices/accounts/projects/
   }
 }
 
+// Project Connection to Application Insights
+resource projectAppInsightsConnection 'Microsoft.CognitiveServices/accounts/projects/connections@2025-10-01-preview' = {
+  parent: aiProject
+  name: 'appinsights-connection'
+  properties: {
+    category: 'AppInsights'
+    target: applicationInsightsConnectionString
+    authType: 'ApiKey'
+    credentials: {
+      key: applicationInsightsInstrumentationKey
+    }
+    metadata: {
+      ResourceId: applicationInsightsId
+    }
+  }
+}
 // Account Capability Host (empty properties) - Optional
 resource accountCapabilityHost 'Microsoft.CognitiveServices/accounts/capabilityHosts@2025-10-01-preview' = if (deployCapabilityHosts) {
   name: 'accountCapHost'
   parent: aiFoundry
-  properties: {}
+  properties: {
+    capabilityHostKind: 'Agents'
+  }
   dependsOn: [
     modelDeployment
   ]
@@ -171,10 +198,12 @@ resource projectCapabilityHost 'Microsoft.CognitiveServices/accounts/projects/ca
     vectorStoreConnections: [
       projectSearchConnection.name
     ]
+    threadStorageConnections: [
+      projectCosmosConnection.name
+    ]
   }
   dependsOn: [
     accountCapabilityHost
-    projectCosmosConnection
   ]
 }
 
