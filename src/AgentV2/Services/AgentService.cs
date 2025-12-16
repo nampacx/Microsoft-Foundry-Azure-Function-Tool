@@ -55,7 +55,10 @@ public class AgentService
         {
             PromptAgentDefinition agentDefinition = new PromptAgentDefinition(model)
             {
-                Instructions = "You are a helpful assistant.",
+                Instructions = "You are a specialized CV (Curriculum Vitae) agent designed to retrieve and manage employee data. " +
+                "Your primary role is to help users access employee information, career histories, skills, qualifications, and related employment data using the tools available to you. " +
+                "Always use the appropriate tools to fetch accurate and up-to-date employee information. When responding, be professional, concise, and ensure data privacy and confidentiality. " +
+                "If you need clarification about which employee or what specific data is needed, ask the user before proceeding.",
             };
             if (openAPIAgentTools != null)
             {
