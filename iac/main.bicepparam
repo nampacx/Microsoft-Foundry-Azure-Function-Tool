@@ -17,10 +17,10 @@ param aiFoundryName = 'kk-fndry-ccnt'
 param projectName = 'kk-prjct'
 
 // Model deployment configuration
-param modelDeploymentName = 'gpt-4o-deployment'
+param modelDeploymentName = 'gpt-5.2-deployment'
 param modelSkuCapacity = 200
 param modelSkuName = 'GlobalStandard'
-param modelName = 'gpt-4o'
+param modelName = 'gpt-5.2'
 param modelFormat = 'OpenAI'
 
 // Project-dependent resources
