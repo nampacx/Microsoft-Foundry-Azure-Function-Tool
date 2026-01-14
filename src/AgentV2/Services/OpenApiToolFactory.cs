@@ -12,11 +12,11 @@ public static class OpenApiToolFactory
         Console.WriteLine("Creating OpenAPI tool definition...");
 
         OpenAPIFunctionDefinition toolDefinition = new(
-            name: "get_weather",
+            name: "cv_data",
             spec: BinaryData.FromBytes(BinaryData.FromBytes(openApiSpec)),
             auth: new OpenAPIAnonymousAuthenticationDetails()
             );
-        toolDefinition.Description = "Retrieve weather information for a location.";
+        toolDefinition.Description = "Retrieve CV (Curriculum Vitae) information for employees.";
         OpenAPIAgentTool openapiTool = new(toolDefinition);
         return openapiTool;
     }
