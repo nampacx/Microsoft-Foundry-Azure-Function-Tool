@@ -10,11 +10,18 @@ param queueNames array
 @description('Workspace ID for container naming')
 param workspaceId string
 
+// Generate a unique suffix based on resource group
+var uniqueSuffix = uniqueString(resourceGroup().id)
 var storageAccountNameCleaned = toLower(replace(storageAccountName, '-', ''))
+// Storage account names must be 3-24 chars, uniqueString is 13 chars, so limit base name to 11 chars
+var storageAccountBaseName = length(storageAccountNameCleaned) > 11
+  ? substring(storageAccountNameCleaned, 0, 11)
+  : storageAccountNameCleaned
+var storageAccountNameWithSuffix = '${storageAccountBaseName}${uniqueSuffix}'
 
 // Storage Account for Foundry
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: storageAccountNameCleaned
+  name: storageAccountNameWithSuffix
   location: location
   sku: {
     name: 'Standard_LRS'

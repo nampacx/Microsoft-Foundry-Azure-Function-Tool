@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionTool", "FunctionToo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenApiV2", "AgentV2\OpenApiV2.csproj", "{2F4A6BC0-3915-4441-82B4-B311D373F736}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YamlDeployment", "YamlDeployment\YamlDeployment.csproj", "{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{2F4A6BC0-3915-4441-82B4-B311D373F736}.Release|x64.Build.0 = Release|Any CPU
 		{2F4A6BC0-3915-4441-82B4-B311D373F736}.Release|x86.ActiveCfg = Release|Any CPU
 		{2F4A6BC0-3915-4441-82B4-B311D373F736}.Release|x86.Build.0 = Release|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Debug|x64.Build.0 = Debug|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Debug|x86.Build.0 = Debug|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Release|x64.ActiveCfg = Release|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Release|x64.Build.0 = Release|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Release|x86.ActiveCfg = Release|Any CPU
+		{510C870E-72E3-BF70-9DD2-A44EFF3B49D1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

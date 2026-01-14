@@ -4,7 +4,7 @@ using './main.bicep'
 // Modify these values as needed for your deployment
 
 // Function App parameters
-param functionAppName = 'koko-agent-tool-func-app'
+param functionAppName = 'nampacx-func-app'
 param runtime = 'dotnet-isolated'
 
 param queueNames = [
@@ -13,18 +13,18 @@ param queueNames = [
 ]
 
 // Foundry resources
-param aiFoundryName = 'kk-fndry-ccnt'
-param projectName = 'kk-prjct'
+param aiFoundryName = 'nampacx-fndry-2'
+param projectName = 'nampacx-fndry-prjct'
 
 // Model deployment configuration
 param modelDeploymentName = 'gpt-4o-mini-deployment'
-param modelSkuCapacity = 200
+param modelSkuCapacity = 50
 param modelSkuName = 'GlobalStandard'
 param modelName = 'gpt-4o-mini'
 param modelFormat = 'OpenAI'
 
 // Project-dependent resources
-param storageAccountName = 'kkfndryagtendstorage'
-param cosmosDbAccountName = 'kkfndryagtendcosmosdb'
-param searchServiceName = 'kkfndryagtendsearch'
-param keyVaultName = 'kkfndryagtendkeyvault'
+param storageAccountName = 'nampacx-fndry-sa'
+param cosmosDbAccountName = 'nampacx-fndry-cosmosdb'
+param searchServiceName = 'nampacx-fndry-search'
+param keyVaultName = 'nampacx-fndry-kv'
